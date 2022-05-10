@@ -196,12 +196,12 @@ public class ColorPaletteController : MonoBehaviour, IBeginDragHandler, IDragHan
         //calculate Saturation and Value change
         if (controlSV)
         {
-            float r1 = Vector2.Distance(centerPoint, prevPos);
+            /*float r1 = Vector2.Distance(centerPoint, prevPos);
             float r2 = Vector2.Distance(centerPoint, currentPos);
-            float dr = r2 - r1;
-            satValAmount += dr / paletteRadius;
-            satValAmount = Mathf.Clamp(satValAmount, 0, 2);
-            CalculateSaturationAndValue(satValAmount);
+            float dr = r2 - r1;*/
+            satValAmount += paletteRadius;
+            //satValAmount = Mathf.Clamp(satValAmount, 0, 2);
+            //CalculateSaturationAndValue(satValAmount);
         }
 
         //calculate Hue change
