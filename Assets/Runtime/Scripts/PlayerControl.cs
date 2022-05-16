@@ -7,16 +7,19 @@ public class PlayerControl : MonoBehaviour
 {
     [SerializeField] Rigidbody2D playerRb;
     [SerializeField] private float playerSpeed;
-    [SerializeField] private SpriteRenderer interactionBoxes;
+    [SerializeField] private SpriteRenderer interactionBoxesGarden;
+    [SerializeField] private SpriteRenderer interactionBoxesDoor;
+    [SerializeField] private SpriteRenderer interactionBoxesWell;
     [SerializeField] private float fadeSpeed;
     [SerializeField] private GameObject backGround;
     [SerializeField] private float parallaxEffect;
+    [SerializeField] GameManager gameManager;
     private Color defaultColor;
 
     // Start is called before the first frame update
     void Start()
     {
-        defaultColor = interactionBoxes.color;
+        defaultColor = interactionBoxesGarden.color;
     }
     private void Update()
     {
@@ -31,10 +34,12 @@ public class PlayerControl : MonoBehaviour
 
     private void PlayerMovement()
     {
-        var horizontalInput = Input.GetAxis("Horizontal");
-        playerRb.AddForce(Vector2.right * horizontalInput * playerSpeed);
-        backGround.transform.position = new Vector3(parallaxEffect, backGround.transform.position.y, backGround.transform.position.z);
-        
+        if(gameManager.InPlayMode)
+        {
+            var horizontalInput = Input.GetAxis("Horizontal");
+            playerRb.AddForce(Vector2.right * horizontalInput * playerSpeed);
+            backGround.transform.position = new Vector3(parallaxEffect, backGround.transform.position.y, backGround.transform.position.z);
+        }
         
     }
 
@@ -43,9 +48,21 @@ public class PlayerControl : MonoBehaviour
         
         if (collision.CompareTag("GardenTerrain"))
         {
-            float alphaBoxFadeIn = interactionBoxes.color.a + Mathf.Clamp(1, 0, fadeSpeed);
-            interactionBoxes.color = new Color(interactionBoxes.color.r, interactionBoxes.color.g, interactionBoxes.color.b, alphaBoxFadeIn);
+            float alphaBoxFadeIn = interactionBoxesGarden.color.a + Mathf.Clamp(1, 0, fadeSpeed);
+            interactionBoxesGarden.color = new Color(interactionBoxesGarden.color.r, interactionBoxesGarden.color.g, interactionBoxesGarden.color.b, alphaBoxFadeIn);
             
+        }
+        if (collision.CompareTag("WellBox"))
+        {
+            float alphaBoxFadeIn = interactionBoxesWell.color.a + Mathf.Clamp(1, 0, fadeSpeed);
+            interactionBoxesWell.color = new Color(interactionBoxesWell.color.r, interactionBoxesWell.color.g, interactionBoxesWell.color.b, alphaBoxFadeIn);
+
+        }
+        if (collision.CompareTag("DoorBox"))
+        {
+            float alphaBoxFadeIn = interactionBoxesDoor.color.a + Mathf.Clamp(1, 0, fadeSpeed);
+            interactionBoxesDoor.color = new Color(interactionBoxesDoor.color.r, interactionBoxesDoor.color.g, interactionBoxesDoor.color.b, alphaBoxFadeIn);
+
         }
     }
 
@@ -53,7 +70,17 @@ public class PlayerControl : MonoBehaviour
     {
         if(collision.CompareTag("GardenTerrain"))
         {
-            interactionBoxes.color = defaultColor;
+            interactionBoxesGarden.color = defaultColor;
+        }
+
+        if(collision.CompareTag("WellBox"))
+        {
+            interactionBoxesWell.color = defaultColor;
+        }
+
+        if(collision.CompareTag("DoorBox"))
+        {
+            interactionBoxesDoor.color = defaultColor;
         }
     }
 }

@@ -9,6 +9,7 @@ public class ControlBackGroundCanvas : MonoBehaviour
     [SerializeField] GameObject colorPicker;
     [SerializeField] GameObject colorSlideSaturation;
     [SerializeField] GameObject frame;
+    [SerializeField] GameManager gameManager;
 
     // Start is called before the first frame update
     void Start()
@@ -20,9 +21,18 @@ public class ControlBackGroundCanvas : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(!isOnFullView)
+       if(!gameManager.InPlayMode)
         {
-            transform.position += new Vector3(-Input.GetAxis("Horizontal") * Time.deltaTime * speed, 0f, -Input.GetAxis("Mouse ScrollWheel") * speed * 10 * Time.deltaTime);
+            BackGroundBounds();
+            BackGroundRoll();
+        }
+       
+    }
+
+    private void BackGroundBounds()
+    {
+        if (!isOnFullView)
+        {
             var backGroundPos = transform.position;
             if (backGroundPos.x >= 330.1f)
             {
@@ -33,19 +43,26 @@ public class ControlBackGroundCanvas : MonoBehaviour
                 backGroundPos.x = -20.2f;
             }
 
-            if(backGroundPos.z >= -482.3f)
+            if (backGroundPos.z >= -482.3f)
             {
                 backGroundPos.z = -482.3f;
             }
-            else if(backGroundPos.z <= -600)
+            else if (backGroundPos.z <= -600)
             {
                 backGroundPos.z = -600;
             }
 
             transform.position = backGroundPos;
         }
-       
-       
+    }
+
+    private void BackGroundRoll()
+    {
+        if (!isOnFullView)
+        {
+            transform.position += new Vector3(-Input.GetAxis("Horizontal") * Time.deltaTime * speed, 0f, -Input.GetAxis("Mouse ScrollWheel") * speed * 10 * Time.deltaTime);
+
+        }
     }
 
     public void FullView()

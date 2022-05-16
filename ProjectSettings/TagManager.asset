@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - GardenTerrain
+  - WellBox
+  - DoorBox
   layers:
   - Default
   - TransparentFX

@@ -11,13 +11,13 @@ public class ButtonChangeColor : MonoBehaviour
     //[SerializeField] Button button;
     [SerializeField] Button roseFlowerButton;
     [SerializeField] Image colorPickedByPalete;
+    
     private Button button;
     // Start is called before the first frame update
     void Start()
     {
         button = GetComponent<Button>();
         button.onClick.AddListener(ChangeColor);
-
     }
 
     // Update is called once per frame
