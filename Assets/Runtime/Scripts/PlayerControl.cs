@@ -9,8 +9,9 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private float playerSpeed;
     [SerializeField] private SpriteRenderer interactionBoxes;
     [SerializeField] private float fadeSpeed;
+    [SerializeField] private GameObject backGround;
+    [SerializeField] private float parallaxEffect;
     private Color defaultColor;
-    
 
     // Start is called before the first frame update
     void Start()
@@ -19,7 +20,7 @@ public class PlayerControl : MonoBehaviour
     }
     private void Update()
     {
-       
+   
     }
 
     // Update is called once per frame
@@ -32,14 +33,11 @@ public class PlayerControl : MonoBehaviour
     {
         var horizontalInput = Input.GetAxis("Horizontal");
         playerRb.AddForce(Vector2.right * horizontalInput * playerSpeed);
-
+        backGround.transform.position = new Vector3(parallaxEffect, backGround.transform.position.y, backGround.transform.position.z);
+        
+        
     }
 
-
-    private void PlayerInteraction()
-    {
-
-    }
     private void OnTriggerStay2D(Collider2D collision)
     {
         
