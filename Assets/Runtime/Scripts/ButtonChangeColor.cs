@@ -8,7 +8,7 @@ using DG.Tweening;
 
 public class ButtonChangeColor : MonoBehaviour
 {
-    //[SerializeField] Button button;
+    [SerializeField] Button overLapRoseButton;
     [SerializeField] Button roseFlowerButton;
     [SerializeField] Image colorPickedByPalete;
     
@@ -34,9 +34,10 @@ public class ButtonChangeColor : MonoBehaviour
         
     }
 
-   /* public void ChangeRoseInternalColor()
+    public void ChangeRoseInternalColor()
     {
         roseFlowerButton.image.DOColor(colorPickedByPalete.color, 3);
         roseFlowerButton.image.DOFillAmount(3, 2);
-    }*/
+        overLapRoseButton.image.DOFade(0, 5);
+    }
 }
