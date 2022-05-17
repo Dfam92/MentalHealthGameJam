@@ -8,6 +8,7 @@ TagManager:
   - WellBox
   - DoorBox
   - WateringCan
+  - ColorFlowers
   layers:
   - Default
   - TransparentFX
