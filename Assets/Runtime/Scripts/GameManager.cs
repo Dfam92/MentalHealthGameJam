@@ -26,6 +26,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject colorModeCamera;
     [SerializeField] GameObject flowersToColor;
 
+    [SerializeField] Button backButton;
+
     public bool inTrasition = true;
     bool inPlayMode = true;
     bool inColorMode;
@@ -60,6 +62,7 @@ public class GameManager : MonoBehaviour
         playModeCamera.SetActive(false);
         colorModeCamera.SetActive(true);
         flowersToColor.SetActive(true);
+        StartCoroutine(ActiveBackButton());
     }
 
     public void BackColorFlower()
@@ -69,6 +72,8 @@ public class GameManager : MonoBehaviour
         colorModeCamera.SetActive(false);
         flowersToColor.SetActive(false);
         objectiveWasFinished = true;
+        flowersAreDisponible = false;
+        backButton.interactable = false;
     }
 
     // Update is called once per frame
@@ -128,6 +133,12 @@ public class GameManager : MonoBehaviour
             dayObject.SetActive(false);
         }
         
+    }
+
+    IEnumerator ActiveBackButton()
+    {
+        yield return new WaitForSeconds(3);
+        backButton.interactable = true;
     }
 
 

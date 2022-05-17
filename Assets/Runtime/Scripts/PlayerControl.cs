@@ -33,6 +33,9 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] GameObject Rose2Button;
     [SerializeField] GameObject Rose3Button;
 
+    [SerializeField] GameObject roseToCatch;
+    [SerializeField] GameObject daisyToCatch;
+
     private int rotationWellCount;
     //[SerializeField] CopyParentColor parentColor;
     private bool inInteraction;
@@ -73,11 +76,18 @@ public class PlayerControl : MonoBehaviour
         if(collision.CompareTag("ColorFlowers"))
         {
             PlayerInteraction();
+           
             if(inInteraction && gameManager.flowersAreDisponible && !gameManager.inDayOne)
             {
                 gameManager.ColorFlowers();
-                gameManager.flowersAreDisponible = false;
-                
+            }
+
+            if (inInteraction && gameManager.flowersAreDisponible && gameManager.inFInalDay)
+            {
+                roseToCatch.SetActive(true);
+                daisyToCatch.SetActive(true);
+                Rose3.SetActive(false);
+                Daisy3.SetActive(false);
             }
         }
         if (collision.CompareTag("WateringCan"))
