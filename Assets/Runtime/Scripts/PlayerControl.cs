@@ -8,6 +8,7 @@ public class PlayerControl : MonoBehaviour
 {
     [SerializeField] Rigidbody2D playerRb;
     [SerializeField] private float playerSpeed;
+    [SerializeField] private float runSpeed;
     [SerializeField] private SpriteRenderer interactionBoxesGarden;
     [SerializeField] private SpriteRenderer interactionBoxesDoor;
     [SerializeField] private SpriteRenderer interactionBoxesWell;
@@ -38,10 +39,14 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] GameObject roseToCatch;
     [SerializeField] GameObject daisyToCatch;
 
+    [SerializeField] Animator playerAnim;
+
     private int rotationWellCount;
+    private float defaultSpeed;
     //[SerializeField] CopyParentColor parentColor;
     private bool inInteraction;
     private Color defaultColor;
+    private Quaternion defaultPos;
 
     //Todo
     //parentColor.ShareParentColor() call when the color mode is disabled;
@@ -50,10 +55,13 @@ public class PlayerControl : MonoBehaviour
     void Start()
     {
         defaultColor = interactionBoxesGarden.color;
+        defaultPos = transform.rotation;
+        defaultSpeed = playerSpeed;
+
     }
     private void Update()
     {
-
+        
     }
 
     // Update is called once per frame
@@ -66,9 +74,36 @@ public class PlayerControl : MonoBehaviour
     {
         if (gameManager.InPlayMode)
         {
+            
             var horizontalInput = Input.GetAxis("Horizontal");
             playerRb.AddForce(Vector2.right * horizontalInput * playerSpeed);
             backGround.transform.position = new Vector3(parallaxEffect, backGround.transform.position.y, backGround.transform.position.z);
+            playerAnim.SetBool("PlayerWalk", true);
+            if(horizontalInput < 0 )
+            {
+                var invertPos = new Quaternion(transform.rotation.x, -180, transform.rotation.z,transform.rotation.w);
+                transform.rotation = invertPos;
+            }
+            else if(horizontalInput > 0)
+            {
+                transform.rotation = defaultPos;
+            }
+            else
+            {
+                playerAnim.SetBool("PlayerWalk", false);
+            }
+          
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                playerSpeed = runSpeed;
+                playerAnim.SetBool("PlayerRun", true);
+            }
+            else
+            {
+                playerAnim.SetBool("PlayerRun", false);
+                playerSpeed = defaultSpeed;
+            }
+            
         }
 
     }
@@ -168,7 +203,7 @@ public class PlayerControl : MonoBehaviour
             float alphaBoxFadeIn = interactionBoxesDoor.color.a + Mathf.Clamp(1, 0, fadeSpeed);
             interactionBoxesDoor.color = new Color(interactionBoxesDoor.color.r, interactionBoxesDoor.color.g, interactionBoxesDoor.color.b, alphaBoxFadeIn);
             PlayerInteraction();
-            if (inInteraction == true && gameManager.flowersWereWatered)
+            if (inInteraction == true && gameManager.flowersWereWatered )
             {
                 if (gameManager.inDayOne)
                 {
