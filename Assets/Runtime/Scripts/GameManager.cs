@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] Image blackScreen;
     [SerializeField] float fadeSpeed;
 
+    [SerializeField] TextMeshProUGUI numberDay;
+
     public List<TextMeshProUGUI> listOfObjectivesDayOne;
     public List<TextMeshProUGUI> listOfObjectivesDayTwo;
     public List<TextMeshProUGUI> listOfObjectivesDayThree;
@@ -49,6 +51,7 @@ public class GameManager : MonoBehaviour
     public bool dayOver;
 
     int objectivesCount = 0;
+    public int countDays = 1;
 
     // Start is called before the first frame update
     void Start()
@@ -79,7 +82,8 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(dayOver)
+        numberDay.text = " " + countDays;
+        if (dayOver)
         {
             objectivesCount = 0;
         }

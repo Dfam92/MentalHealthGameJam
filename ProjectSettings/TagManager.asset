@@ -9,6 +9,7 @@ TagManager:
   - DoorBox
   - WateringCan
   - ColorFlowers
+  - FriendDoor
   layers:
   - Default
   - TransparentFX

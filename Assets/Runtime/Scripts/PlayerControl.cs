@@ -11,6 +11,7 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private SpriteRenderer interactionBoxesGarden;
     [SerializeField] private SpriteRenderer interactionBoxesDoor;
     [SerializeField] private SpriteRenderer interactionBoxesWell;
+    [SerializeField] private SpriteRenderer interactionBoxesFriendDoor;
     [SerializeField] private float fadeSpeed;
     [SerializeField] private GameObject backGround;
     [SerializeField] private float parallaxEffect;
@@ -32,6 +33,7 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] GameObject Rose1Button;
     [SerializeField] GameObject Rose2Button;
     [SerializeField] GameObject Rose3Button;
+    [SerializeField] GameObject playerFriend;
 
     [SerializeField] GameObject roseToCatch;
     [SerializeField] GameObject daisyToCatch;
@@ -93,7 +95,7 @@ public class PlayerControl : MonoBehaviour
         if (collision.CompareTag("WateringCan"))
         {
             PlayerInteraction();
-            if (inInteraction == true && gameManager.bucketIsDisponible)
+            if (inInteraction == true && gameManager.bucketIsDisponible && !gameManager.flowersWereWatered && !gameManager.inFInalDay)
             {
                 Debug.Log("Watering pressed");
                 gameManager.wateringCanWasCaught = true;
@@ -109,7 +111,7 @@ public class PlayerControl : MonoBehaviour
             float alphaBoxFadeIn = interactionBoxesGarden.color.a + Mathf.Clamp(1, 0, fadeSpeed);
             interactionBoxesGarden.color = new Color(interactionBoxesGarden.color.r, interactionBoxesGarden.color.g, interactionBoxesGarden.color.b, alphaBoxFadeIn);
             PlayerInteraction();
-            if (inInteraction == true && gameManager.wateringCanWasCaught && gameManager.wateringCanWasFilled && gameManager.bucketWasFilled)
+            if (inInteraction == true && gameManager.wateringCanWasCaught && gameManager.wateringCanWasFilled && gameManager.bucketWasFilled && !gameManager.flowersWereWatered)
             {
                 wateringCanSelected.SetActive(false);
                 wateringCanDesactived.SetActive(true);
@@ -128,7 +130,7 @@ public class PlayerControl : MonoBehaviour
             float alphaBoxFadeIn = interactionBoxesWell.color.a + Mathf.Clamp(1, 0, fadeSpeed);
             interactionBoxesWell.color = new Color(interactionBoxesWell.color.r, interactionBoxesWell.color.g, interactionBoxesWell.color.b, alphaBoxFadeIn);
             PlayerInteraction();
-            if (inInteraction == true && !gameManager.inDayOne && !gameManager.bucketIsDisponible)
+            if (inInteraction == true && !gameManager.inDayOne && !gameManager.bucketIsDisponible && !gameManager.flowersAreDisponible && !gameManager.inFInalDay)
             {
                 Debug.Log("Need To fill the bucket");
                 if (Input.GetKeyDown(KeyCode.Space))
@@ -213,6 +215,18 @@ public class PlayerControl : MonoBehaviour
                 Debug.Log("FlowersNeedWater");
             }
         }
+        if (collision.CompareTag("FriendDoor"))
+        {
+            float alphaBoxFadeIn = interactionBoxesFriendDoor.color.a + Mathf.Clamp(1, 0, fadeSpeed);
+            interactionBoxesFriendDoor.color = new Color(interactionBoxesFriendDoor.color.r, interactionBoxesFriendDoor.color.g, interactionBoxesFriendDoor.color.b, alphaBoxFadeIn);
+            PlayerInteraction();
+
+            if(inInteraction && gameManager.inFInalDay && !gameManager.flowersAreDisponible)
+            {
+                playerFriend.SetActive(true);
+                Debug.Log("Fim de Jogo");
+            }
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -234,6 +248,10 @@ public class PlayerControl : MonoBehaviour
             interactionBoxesDoor.color = defaultColor;
 
         }
+        if (collision.CompareTag("FriendDoor"))
+        {
+            interactionBoxesFriendDoor.color = defaultColor;
+        }
     }
 
     private void PlayerInteraction()
@@ -252,6 +270,7 @@ public class PlayerControl : MonoBehaviour
 
     private void ResetDay()
     {
+        gameManager.countDays++;
         gameManager.flowersAreDisponible = true;
         gameManager.dayOver = true;
         bucketFilled.SetActive(false);
