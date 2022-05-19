@@ -2,16 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class CopyParentColor : MonoBehaviour
 {
     private SpriteRenderer sprite;
-    private Image parentImage;
+    [SerializeField] private SpriteRenderer parentImage;
     // Start is called before the first frame update
     void Start()
     {
-        sprite = GetComponent<SpriteRenderer>();
-        parentImage = GetComponentInParent<Image>();
+        
     }
 
     // Update is called once per frame
@@ -22,6 +22,11 @@ public class CopyParentColor : MonoBehaviour
 
     public void ShareParentColor()
     {
+        sprite = GetComponent<SpriteRenderer>();
         sprite.color = parentImage.color;
+    }
+    private void OnEnable()
+    {
+        ShareParentColor();
     }
 }

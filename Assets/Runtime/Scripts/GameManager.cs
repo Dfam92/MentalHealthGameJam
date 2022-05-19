@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
 {
 
     [SerializeField] Image blackScreen;
+    [SerializeField] Image blackScreenColorMode;
     [SerializeField] float fadeSpeed;
 
     [SerializeField] TextMeshProUGUI numberDay;
@@ -37,6 +38,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject hideHints;
     [SerializeField] GameObject playModeButton;
     [SerializeField] GameObject backGroundFlowers;
+
+    [SerializeField] PlayerControl player;
 
     public bool inTrasition = true;
     bool inPlayMode = true;
@@ -83,7 +86,7 @@ public class GameManager : MonoBehaviour
         InPlayMode = false;
     }
 
-    public void BackColorFlower()
+    private void BackColorFlower()
     {
         backGroundColorMode.SetActive(false);
         playModeCamera.SetActive(true);
@@ -121,11 +124,30 @@ public class GameManager : MonoBehaviour
         
     }
 
+    public void FadeInBlackScreenColorMode()
+    {
+        blackScreenColorMode.DOFade(1, fadeSpeed);
+
+    }
+
+    public void FadeOutBlackScreenColorMode()
+    {
+        blackScreenColorMode.DOFade(0, fadeSpeed);
+
+    }
+
     public IEnumerator FadeTransition(float timeToWaitFadeOut)
     {
         FadeInBlackScreen();
         yield return new WaitForSeconds(timeToWaitFadeOut);
         FadeOutBlackScreen(); ;
+    }
+
+    public IEnumerator FadeTransitionColorMode(float timeToWaitFadeOut)
+    {
+        FadeInBlackScreenColorMode();
+        yield return new WaitForSeconds(timeToWaitFadeOut);
+        FadeOutBlackScreenColorMode(); ;
     }
 
     public void CheckObjective(List<TextMeshProUGUI> listOfObjectives, bool day,GameObject dayObject)
@@ -231,6 +253,7 @@ public class GameManager : MonoBehaviour
     IEnumerator ChangeFadeColorMode()
     {
         StartCoroutine(FadeTransition(4));
+        player.playerImage.enabled = false;
         yield return new WaitForSeconds(4);
         InColorMode = true;
         InPlayMode = false;
@@ -239,11 +262,24 @@ public class GameManager : MonoBehaviour
 
     IEnumerator ChangeFadePlayMode()
     {
-        StartCoroutine(FadeTransition(4));
+        StartCoroutine(FadeTransitionColorMode(4));
         yield return new WaitForSeconds(4);
+        player.playerImage.enabled = true;
         InPlayMode = true;
         InColorMode = false;
         backGroundColorMode.SetActive(false);
 
+    }
+    IEnumerator ChangeBackPlayMode()
+    {
+        StartCoroutine(FadeTransitionColorMode(4));
+        yield return new WaitForSeconds(4);
+        BackColorFlower();
+
+    }
+
+    public void BackButtonFunction()
+    {
+        StartCoroutine(ChangeBackPlayMode());
     }
 }

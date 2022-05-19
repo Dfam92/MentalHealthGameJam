@@ -35,6 +35,7 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] GameObject Rose1Button;
     [SerializeField] GameObject Rose2Button;
     [SerializeField] GameObject Rose3Button;
+    [SerializeField] GameObject fullViewButton;
     [SerializeField] GameObject playerFriend;
 
     [SerializeField] GameObject mainDayOneObjectives;
@@ -49,23 +50,19 @@ public class PlayerControl : MonoBehaviour
 
     [SerializeField] GameObject roseToCatch;
     [SerializeField] GameObject daisyToCatch;
-
-    
+    public SpriteRenderer playerImage;
+    [SerializeField] Collider2D playerCollider;
 
     [SerializeField] Animator playerAnim;
 
     private int rotationWellCount;
     private float defaultSpeed;
-    //[SerializeField] CopyParentColor parentColor;
+    
     private bool inInteraction;
     private Color defaultColor;
     private Quaternion defaultPos;
     private bool handlerUp;
     private bool handlerDown;
-
-    //Todo
-    //parentColor.ShareParentColor() call when the color mode is disabled;
-    
 
     // Start is called before the first frame update
     void Start()
@@ -228,7 +225,8 @@ public class PlayerControl : MonoBehaviour
                 {
                     if (gameManager.inDayOne)
                     {
-
+                        playerImage.sortingOrder = -2;
+                        playerCollider.enabled = false;
                         StartCoroutine(ResetDayOneTime());
                         StartCoroutine(gameManager.FadeTransition(dayFadeTime));
                         gameManager.inDayOne = false;
@@ -236,12 +234,16 @@ public class PlayerControl : MonoBehaviour
                     }
                     else if (gameManager.inDayTwo && gameManager.flowersWereWatered)
                     {
+                        playerImage.sortingOrder = -2;
+                        playerCollider.enabled = false;
                         StartCoroutine(ResetDayTwoTime());
                         StartCoroutine(gameManager.FadeTransition(dayFadeTime));
                         gameManager.inDayTwo = false;
                     }
                     else if (gameManager.inDayThree && gameManager.flowersWereWatered)
                     {
+                        playerImage.sortingOrder = -2;
+                        playerCollider.enabled = false;
                         StartCoroutine(ResetDayThreeTime());
                         StartCoroutine(gameManager.FadeTransition(dayFadeTime));
                         gameManager.inDayThree = false;
@@ -261,6 +263,7 @@ public class PlayerControl : MonoBehaviour
                 if (inInteraction && gameManager.inFInalDay && !gameManager.flowersAreDisponible)
                 {
                     playerFriend.SetActive(true);
+                    fullViewButton.SetActive(true);
                     Debug.Log("Fim de Jogo");
                 }
             }
@@ -314,6 +317,7 @@ public class PlayerControl : MonoBehaviour
 
     private void ResetDay()
     {
+        StartCoroutine(PlayerReAppear());
         gameManager.countDays++;
         gameManager.flowersAreDisponible = true;
         gameManager.dayOver = true;
@@ -402,6 +406,11 @@ public class PlayerControl : MonoBehaviour
 
     }
 
-    
+    IEnumerator PlayerReAppear()
+    {
+        yield return new WaitForSeconds(3);
+        playerImage.sortingOrder = 2;
+        playerCollider.enabled = true;
+    }
 }
   
