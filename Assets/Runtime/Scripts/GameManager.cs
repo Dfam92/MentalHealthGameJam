@@ -23,12 +23,20 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject dayThreeObjectives;
     [SerializeField] GameObject finalDayObjectives;
 
+    [SerializeField] GameObject canvasColorMode;
+    [SerializeField] GameObject canvasPlayMode;
+
     [SerializeField] GameObject backGroundColorMode;
     [SerializeField] GameObject playModeCamera;
     [SerializeField] GameObject colorModeCamera;
     [SerializeField] GameObject flowersToColor;
-
+    [SerializeField] GameObject hints;
+    
     [SerializeField] Button backButton;
+    [SerializeField] GameObject showHints;
+    [SerializeField] GameObject hideHints;
+    [SerializeField] GameObject playModeButton;
+    [SerializeField] GameObject backGroundFlowers;
 
     public bool inTrasition = true;
     bool inPlayMode = true;
@@ -53,19 +61,26 @@ public class GameManager : MonoBehaviour
     int objectivesCount = 0;
     public int countDays = 1;
 
+    private bool hintsOn = false;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        canvasColorMode.SetActive(false);
     }
 
     public void ColorFlowers()
     {
+        
         backGroundColorMode.SetActive(false);
         playModeCamera.SetActive(false);
         colorModeCamera.SetActive(true);
         flowersToColor.SetActive(true);
+        playModeButton.SetActive(false);
         StartCoroutine(ActiveBackButton());
+        backGroundFlowers.SetActive(true);
+        InColorMode = true;
+        InPlayMode = false;
     }
 
     public void BackColorFlower()
@@ -74,23 +89,24 @@ public class GameManager : MonoBehaviour
         playModeCamera.SetActive(true);
         colorModeCamera.SetActive(false);
         flowersToColor.SetActive(false);
+        playModeButton.SetActive(true);
         objectiveWasFinished = true;
         flowersAreDisponible = false;
         backButton.interactable = false;
+        backGroundFlowers.SetActive(false);
+        InPlayMode = true;
+        InColorMode = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+
+        CheckModeOfPlay();
+        CheckHints();
+    
         numberDay.text = " " + countDays;
-        if (dayOver)
-        {
-            objectivesCount = 0;
-        }
-        CheckObjective(listOfObjectivesDayOne,inDayOne,dayOneObjectives);
-        CheckObjective(listOfObjectivesDayTwo, inDayTwo,dayTwoObjectives);
-        CheckObjective(listOfObjectivesDayThree, inDayThree,dayThreeObjectives);
-        CheckObjective(listOfObjectivesFinalDay, inFInalDay,finalDayObjectives);
+        
     }
 
     public void FadeInBlackScreen()
@@ -145,5 +161,89 @@ public class GameManager : MonoBehaviour
         backButton.interactable = true;
     }
 
+    public void ShowHints()
+    {
+        if(!hintsOn)
+        {
+            hints.SetActive(true);
+            hintsOn = true;
+            hideHints.SetActive(true);
+            showHints.SetActive(false);
+        }
+        else if(hintsOn)
+        {
+           
+           hints.SetActive(false);
+           hintsOn = false;
+           showHints.SetActive(true);
+           hideHints.SetActive(false);
+        }
+        
+    }
 
+    private void CheckModeOfPlay()
+    {
+        if (InColorMode)
+        {
+            canvasColorMode.SetActive(true);
+            colorModeCamera.SetActive(true);
+        }
+        else
+        {
+            canvasColorMode.SetActive(false);
+            colorModeCamera.SetActive(false);
+        }
+
+        if (inPlayMode)
+        {
+            canvasPlayMode.SetActive(true);
+            playModeCamera.SetActive(true);
+        }
+        else
+        {
+            canvasPlayMode.SetActive(false);
+            playModeCamera.SetActive(false);
+        }
+    }
+
+    private void CheckHints()
+    {
+        if (dayOver)
+        {
+            objectivesCount = 0;
+        }
+        CheckObjective(listOfObjectivesDayOne, inDayOne, dayOneObjectives);
+        CheckObjective(listOfObjectivesDayTwo, inDayTwo, dayTwoObjectives);
+        CheckObjective(listOfObjectivesDayThree, inDayThree, dayThreeObjectives);
+        CheckObjective(listOfObjectivesFinalDay, inFInalDay, finalDayObjectives);
+    }
+    
+    public void ColorModeOn()
+    {
+        StartCoroutine(ChangeFadeColorMode());
+    }
+
+    public void PlayModeOn()
+    {
+        StartCoroutine(ChangeFadePlayMode());
+    }
+
+    IEnumerator ChangeFadeColorMode()
+    {
+        StartCoroutine(FadeTransition(4));
+        yield return new WaitForSeconds(4);
+        InColorMode = true;
+        InPlayMode = false;
+        backGroundColorMode.SetActive(true);
+    }
+
+    IEnumerator ChangeFadePlayMode()
+    {
+        StartCoroutine(FadeTransition(4));
+        yield return new WaitForSeconds(4);
+        InPlayMode = true;
+        InColorMode = false;
+        backGroundColorMode.SetActive(false);
+
+    }
 }

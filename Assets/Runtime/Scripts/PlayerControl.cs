@@ -19,6 +19,7 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] GameManager gameManager;
     [SerializeField] float dayFadeTime;
     [SerializeField] GameObject wateringCanSelected;
+    [SerializeField] GameObject gardenWateringCan;
     [SerializeField] GameObject wateringCanDesactived;
     [SerializeField] GameObject bucketFilled;
     [SerializeField] GameObject bucketLiquid;
@@ -36,8 +37,20 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] GameObject Rose3Button;
     [SerializeField] GameObject playerFriend;
 
+    [SerializeField] GameObject mainDayOneObjectives;
+    [SerializeField] GameObject mainDayTwoObjectives;
+    [SerializeField] GameObject mainDayThreeObjectives;
+    [SerializeField] GameObject mainFinalDayObjectives;
+
+    [SerializeField] GameObject wellCrankDown;
+    [SerializeField] GameObject wellCrankUp;
+    [SerializeField] GameObject wellHandlerUp;
+    [SerializeField] GameObject wellHandlerDown;
+
     [SerializeField] GameObject roseToCatch;
     [SerializeField] GameObject daisyToCatch;
+
+    
 
     [SerializeField] Animator playerAnim;
 
@@ -47,9 +60,12 @@ public class PlayerControl : MonoBehaviour
     private bool inInteraction;
     private Color defaultColor;
     private Quaternion defaultPos;
+    private bool handlerUp;
+    private bool handlerDown;
 
     //Todo
     //parentColor.ShareParentColor() call when the color mode is disabled;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -110,188 +126,181 @@ public class PlayerControl : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if(collision.CompareTag("ColorFlowers"))
+        if(gameManager.InPlayMode)
         {
-            PlayerInteraction();
-           
-            if(inInteraction && gameManager.flowersAreDisponible && !gameManager.inDayOne)
+            if (collision.CompareTag("ColorFlowers"))
             {
-                gameManager.ColorFlowers();
-            }
+                PlayerInteraction();
 
-            if (inInteraction && gameManager.flowersAreDisponible && gameManager.inFInalDay)
-            {
-                roseToCatch.SetActive(true);
-                daisyToCatch.SetActive(true);
-                Rose3.SetActive(false);
-                Daisy3.SetActive(false);
-            }
-        }
-        if (collision.CompareTag("WateringCan"))
-        {
-            PlayerInteraction();
-            if (inInteraction == true && gameManager.bucketIsDisponible && !gameManager.flowersWereWatered && !gameManager.inFInalDay)
-            {
-                Debug.Log("Watering pressed");
-                gameManager.wateringCanWasCaught = true;
-                gameManager.objectiveWasFinished = true;
-                wateringCanSelected.SetActive(true);
-                wateringCanDesactived.SetActive(false);
-
-
-            }
-        }
-        if (collision.CompareTag("GardenTerrain"))
-        {
-            float alphaBoxFadeIn = interactionBoxesGarden.color.a + Mathf.Clamp(1, 0, fadeSpeed);
-            interactionBoxesGarden.color = new Color(interactionBoxesGarden.color.r, interactionBoxesGarden.color.g, interactionBoxesGarden.color.b, alphaBoxFadeIn);
-            PlayerInteraction();
-            if (inInteraction == true && gameManager.wateringCanWasCaught && gameManager.wateringCanWasFilled && gameManager.bucketWasFilled && !gameManager.flowersWereWatered)
-            {
-                wateringCanSelected.SetActive(false);
-                wateringCanDesactived.SetActive(true);
-                gameManager.flowersWereWatered = true;
-                gameManager.objectiveWasFinished = true;
-                Debug.Log("Garden was Watered");
-            }
-            else if (inInteraction == true && gameManager.wateringCanWasCaught && !gameManager.wateringCanWasFilled)
-            {
-                Debug.Log("You need some water");
-            }
-
-        }
-        if (collision.CompareTag("WellBox"))
-        {
-            float alphaBoxFadeIn = interactionBoxesWell.color.a + Mathf.Clamp(1, 0, fadeSpeed);
-            interactionBoxesWell.color = new Color(interactionBoxesWell.color.r, interactionBoxesWell.color.g, interactionBoxesWell.color.b, alphaBoxFadeIn);
-            PlayerInteraction();
-            if (inInteraction == true && !gameManager.inDayOne && !gameManager.bucketIsDisponible && !gameManager.flowersAreDisponible && !gameManager.inFInalDay)
-            {
-                Debug.Log("Need To fill the bucket");
-                if (Input.GetKeyDown(KeyCode.Space))
+                if (inInteraction && gameManager.flowersAreDisponible && !gameManager.inDayOne)
                 {
-                    rotationWellCount++;
-                    Debug.Log(rotationWellCount);
-                    if (rotationWellCount == 10)
-                    {
-                        bucketLiquid.SetActive(true);
-                        bucketFilled.SetActive(true);
-                        gameManager.bucketIsDisponible = true;
-                        gameManager.objectiveWasFinished = true;
-                        Debug.Log("BucketDisponible");
-                        rotationWellCount = 0;
+                    gameManager.ColorFlowers();
+                }
 
+                if (inInteraction && gameManager.flowersAreDisponible && gameManager.inFInalDay)
+                {
+                    roseToCatch.SetActive(true);
+                    daisyToCatch.SetActive(true);
+                    Rose3.SetActive(false);
+                    Daisy3.SetActive(false);
+                }
+            }
+            if (collision.CompareTag("WateringCan"))
+            {
+                PlayerInteraction();
+                if (inInteraction == true && gameManager.bucketIsDisponible && !gameManager.flowersWereWatered && !gameManager.inFInalDay)
+                {
+                    Debug.Log("Watering pressed");
+                    gameManager.wateringCanWasCaught = true;
+                    gameManager.objectiveWasFinished = true;
+                    wateringCanSelected.SetActive(true);
+                    wateringCanDesactived.SetActive(false);
+
+
+                }
+            }
+            if (collision.CompareTag("GardenTerrain"))
+            {
+                float alphaBoxFadeIn = interactionBoxesGarden.color.a + Mathf.Clamp(1, 0, fadeSpeed);
+                interactionBoxesGarden.color = new Color(interactionBoxesGarden.color.r, interactionBoxesGarden.color.g, interactionBoxesGarden.color.b, alphaBoxFadeIn);
+                PlayerInteraction();
+                if (inInteraction == true && gameManager.wateringCanWasCaught && gameManager.wateringCanWasFilled && gameManager.bucketWasFilled && !gameManager.flowersWereWatered)
+                {
+                    wateringCanSelected.SetActive(false);
+                    wateringCanDesactived.SetActive(true);
+                    gardenWateringCan.SetActive(true);
+                    gameManager.flowersWereWatered = true;
+                    gameManager.objectiveWasFinished = true;
+                    StartCoroutine(DesactiveGardenWateringCan());
+                    Debug.Log("Garden was Watered");
+                }
+                else if (inInteraction == true && gameManager.wateringCanWasCaught && !gameManager.wateringCanWasFilled)
+                {
+                    Debug.Log("You need some water");
+                }
+
+            }
+            if (collision.CompareTag("WellBox"))
+            {
+                float alphaBoxFadeIn = interactionBoxesWell.color.a + Mathf.Clamp(1, 0, fadeSpeed);
+                interactionBoxesWell.color = new Color(interactionBoxesWell.color.r, interactionBoxesWell.color.g, interactionBoxesWell.color.b, alphaBoxFadeIn);
+                PlayerInteraction();
+                if (inInteraction == true && !gameManager.inDayOne && !gameManager.bucketIsDisponible && !gameManager.flowersAreDisponible && !gameManager.inFInalDay)
+                {
+                    Debug.Log("Need To fill the bucket");
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        rotationWellCount++;
+                        PullUpBucket();
+                        Debug.Log(rotationWellCount);
+                        if (rotationWellCount == 10)
+                        {
+                            bucketLiquid.SetActive(true);
+                            bucketFilled.SetActive(true);
+                            gameManager.bucketIsDisponible = true;
+                            gameManager.objectiveWasFinished = true;
+                            Debug.Log("BucketDisponible");
+                            rotationWellCount = 0;
+
+                        }
                     }
                 }
-            }
 
-            if (inInteraction == true && gameManager.wateringCanWasCaught && !gameManager.wateringCanWasFilled && !gameManager.bucketWasFilled && gameManager.bucketIsDisponible)
-            {
-                Debug.Log("Watering Can was filled");
-                gameManager.wateringCanWasFilled = true;
-                gameManager.bucketWasFilled = true;
-                gameManager.objectiveWasFinished = true;
-            }
-            else if (inInteraction == true && gameManager.wateringCanWasCaught && gameManager.wateringCanWasFilled)
-            {
-                Debug.Log("Watering can already filled");
-            }
+                if (inInteraction == true && gameManager.wateringCanWasCaught && !gameManager.wateringCanWasFilled && !gameManager.bucketWasFilled && gameManager.bucketIsDisponible)
+                {
+                    Debug.Log("Watering Can was filled");
+                    gameManager.wateringCanWasFilled = true;
+                    gameManager.bucketWasFilled = true;
+                    gameManager.objectiveWasFinished = true;
+                }
+                else if (inInteraction == true && gameManager.wateringCanWasCaught && gameManager.wateringCanWasFilled)
+                {
+                    Debug.Log("Watering can already filled");
+                }
 
-        }
-        if (collision.CompareTag("DoorBox"))
-        {
-            float alphaBoxFadeIn = interactionBoxesDoor.color.a + Mathf.Clamp(1, 0, fadeSpeed);
-            interactionBoxesDoor.color = new Color(interactionBoxesDoor.color.r, interactionBoxesDoor.color.g, interactionBoxesDoor.color.b, alphaBoxFadeIn);
-            PlayerInteraction();
-            if (inInteraction == true && gameManager.flowersWereWatered )
+            }
+            if (collision.CompareTag("DoorBox"))
             {
-                if (gameManager.inDayOne)
+                float alphaBoxFadeIn = interactionBoxesDoor.color.a + Mathf.Clamp(1, 0, fadeSpeed);
+                interactionBoxesDoor.color = new Color(interactionBoxesDoor.color.r, interactionBoxesDoor.color.g, interactionBoxesDoor.color.b, alphaBoxFadeIn);
+                PlayerInteraction();
+                if (inInteraction == true && gameManager.flowersWereWatered)
                 {
-                    gameManager.inDayTwo = true;
-                    gameManager.inDayOne = false;
-                    Daisy1.SetActive(true);
-                    Rose1.SetActive(true);
-                    ResetDay();
-                    StartCoroutine(gameManager.FadeTransition(dayFadeTime));
+                    if (gameManager.inDayOne)
+                    {
+
+                        StartCoroutine(ResetDayOneTime());
+                        StartCoroutine(gameManager.FadeTransition(dayFadeTime));
+                        gameManager.inDayOne = false;
+
+                    }
+                    else if (gameManager.inDayTwo && gameManager.flowersWereWatered)
+                    {
+                        StartCoroutine(ResetDayTwoTime());
+                        StartCoroutine(gameManager.FadeTransition(dayFadeTime));
+                        gameManager.inDayTwo = false;
+                    }
+                    else if (gameManager.inDayThree && gameManager.flowersWereWatered)
+                    {
+                        StartCoroutine(ResetDayThreeTime());
+                        StartCoroutine(gameManager.FadeTransition(dayFadeTime));
+                        gameManager.inDayThree = false;
+                    }
                 }
-                else if (gameManager.inDayTwo && gameManager.flowersWereWatered)
+                else if (inInteraction == true && !gameManager.flowersWereWatered)
                 {
-                    gameManager.inDayTwo = false;
-                    gameManager.inDayThree = true;
-                    Daisy2.SetActive(true);
-                    Daisy1.SetActive(false);
-                    Rose1.SetActive(false);
-                    Rose2.SetActive(true);
-                    Daisy2Button.SetActive(true);
-                    Daisy1Button.SetActive(false);
-                    Rose1Button.SetActive(false);
-                    Rose2Button.SetActive(true);
-                    ResetDay();
-                    StartCoroutine(gameManager.FadeTransition(dayFadeTime));
-                }
-                else if (gameManager.inDayThree && gameManager.flowersWereWatered)
-                {
-                    gameManager.inDayThree = false;
-                    gameManager.inFInalDay = true;
-                    Daisy2.SetActive(false);
-                    Daisy3.SetActive(true);
-                    Rose2.SetActive(false);
-                    Rose3.SetActive(true);
-                    Daisy2Button.SetActive(false);
-                    Daisy3Button.SetActive(true);
-                    Rose2Button.SetActive(false);
-                    Rose3Button.SetActive(true);
-                    ResetDay();
-                    StartCoroutine(gameManager.FadeTransition(dayFadeTime));
+                    Debug.Log("FlowersNeedWater");
                 }
             }
-            else if (inInteraction == true && !gameManager.flowersWereWatered)
+            if (collision.CompareTag("FriendDoor"))
             {
-                Debug.Log("FlowersNeedWater");
-            }
-        }
-        if (collision.CompareTag("FriendDoor"))
-        {
-            float alphaBoxFadeIn = interactionBoxesFriendDoor.color.a + Mathf.Clamp(1, 0, fadeSpeed);
-            interactionBoxesFriendDoor.color = new Color(interactionBoxesFriendDoor.color.r, interactionBoxesFriendDoor.color.g, interactionBoxesFriendDoor.color.b, alphaBoxFadeIn);
-            PlayerInteraction();
+                float alphaBoxFadeIn = interactionBoxesFriendDoor.color.a + Mathf.Clamp(1, 0, fadeSpeed);
+                interactionBoxesFriendDoor.color = new Color(interactionBoxesFriendDoor.color.r, interactionBoxesFriendDoor.color.g, interactionBoxesFriendDoor.color.b, alphaBoxFadeIn);
+                PlayerInteraction();
 
-            if(inInteraction && gameManager.inFInalDay && !gameManager.flowersAreDisponible)
-            {
-                playerFriend.SetActive(true);
-                Debug.Log("Fim de Jogo");
+                if (inInteraction && gameManager.inFInalDay && !gameManager.flowersAreDisponible)
+                {
+                    playerFriend.SetActive(true);
+                    Debug.Log("Fim de Jogo");
+                }
             }
         }
+       
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag("GardenTerrain"))
+
+        if(gameManager.InPlayMode)
         {
-            interactionBoxesGarden.color = defaultColor;
+            if (collision.CompareTag("GardenTerrain"))
+            {
+                interactionBoxesGarden.color = defaultColor;
 
+            }
+
+            if (collision.CompareTag("WellBox"))
+            {
+                interactionBoxesWell.color = defaultColor;
+
+            }
+
+            if (collision.CompareTag("DoorBox"))
+            {
+                interactionBoxesDoor.color = defaultColor;
+
+            }
+            if (collision.CompareTag("FriendDoor"))
+            {
+                interactionBoxesFriendDoor.color = defaultColor;
+            }
         }
-
-        if (collision.CompareTag("WellBox"))
-        {
-            interactionBoxesWell.color = defaultColor;
-
-        }
-
-        if (collision.CompareTag("DoorBox"))
-        {
-            interactionBoxesDoor.color = defaultColor;
-
-        }
-        if (collision.CompareTag("FriendDoor"))
-        {
-            interactionBoxesFriendDoor.color = defaultColor;
-        }
+        
     }
 
     private void PlayerInteraction()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.E))
         {
             inInteraction = true;
 
@@ -318,8 +327,81 @@ public class PlayerControl : MonoBehaviour
         
     }
 
+    private void PullUpBucket()
+    {
+        if(handlerUp)
+        {
+            wellCrankUp.SetActive(false);
+            wellHandlerUp.SetActive(false);
+            wellCrankDown.SetActive(true);
+            wellHandlerDown.SetActive(true);
+            handlerUp = false;
+        }
+        else
+        {
+            wellCrankUp.SetActive(true);
+            wellHandlerUp.SetActive(true);
+            wellCrankDown.SetActive(false);
+            wellHandlerDown.SetActive(false);
+            handlerUp = true;
+        }
+    }
 
+    IEnumerator DesactiveGardenWateringCan()
+    {
+        yield return new WaitForSeconds(2);
+        gardenWateringCan.SetActive(false);
+    }
 
-   
+    IEnumerator ResetDayOneTime()
+    {
+        yield return new WaitForSeconds(3);
+        gameManager.inDayTwo = true;
+        mainDayOneObjectives.SetActive(false);
+        mainDayTwoObjectives.SetActive(true);
+        Daisy1.SetActive(true);
+        Rose1.SetActive(true);
+        ResetDay();
+    }
+
+    IEnumerator ResetDayTwoTime()
+    {
+        yield return new WaitForSeconds(3);
+        gameManager.inDayTwo = false;
+        gameManager.inDayThree = true;
+        Daisy2.SetActive(true);
+        Daisy1.SetActive(false);
+        Rose1.SetActive(false);
+        Rose2.SetActive(true);
+        Daisy2Button.SetActive(true);
+        Daisy1Button.SetActive(false);
+        Rose1Button.SetActive(false);
+        Rose2Button.SetActive(true);
+        mainDayTwoObjectives.SetActive(false);
+        mainDayThreeObjectives.SetActive(true);
+        ResetDay();
+
+    }
+
+    IEnumerator ResetDayThreeTime()
+    {
+        yield return new WaitForSeconds(3);
+        gameManager.inDayThree = false;
+        gameManager.inFInalDay = true;
+        Daisy2.SetActive(false);
+        Daisy3.SetActive(true);
+        Rose2.SetActive(false);
+        Rose3.SetActive(true);
+        Daisy2Button.SetActive(false);
+        Daisy3Button.SetActive(true);
+        Rose2Button.SetActive(false);
+        Rose3Button.SetActive(true);
+        mainDayThreeObjectives.SetActive(false);
+        mainFinalDayObjectives.SetActive(true);
+        ResetDay();
+
+    }
+
+    
 }
   
