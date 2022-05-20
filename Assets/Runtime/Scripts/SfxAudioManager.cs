@@ -30,7 +30,7 @@ public class SfxAudioManager : MonoBehaviour
 
     public void CrankSound()
     {
-        PlaySfx(crank, sfxVolume - 0.5f);
+        PlaySfx(crank, sfxVolume - 0.8f);
     }
 
     public void PouringSound()
@@ -45,6 +45,6 @@ public class SfxAudioManager : MonoBehaviour
 
     public void BucketSound()
     {
-        PlaySfx(bucketOn, sfxVolume-0.1f);
+        PlaySfx(bucketOn, sfxVolume-0.3f);
     }
 }

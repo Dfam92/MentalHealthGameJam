@@ -58,6 +58,7 @@ public class PlayerControl : MonoBehaviour
 
     [SerializeField] MusicManager music;
     [SerializeField] SfxAudioManager sfx;
+    [SerializeField] PlayerDialogue checkDialogue;
 
     private int rotationWellCount;
     private float defaultSpeed;
@@ -273,6 +274,7 @@ public class PlayerControl : MonoBehaviour
                     daisyToCatch.SetActive(false);
                     playerFriend.SetActive(true);
                     fullViewButton.SetActive(true);
+                    checkDialogue.inFinalConversation = true;
                     Debug.Log("Fim de Jogo");
                 }
             }
@@ -378,19 +380,20 @@ public class PlayerControl : MonoBehaviour
 
     IEnumerator ResetDayOneTime()
     {
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(5);
         gameManager.inDayTwo = true;
         mainDayOneObjectives.SetActive(false);
         mainDayTwoObjectives.SetActive(true);
         Daisy1.SetActive(true);
         Rose1.SetActive(true);
         music.TwoDayMusic();
+        checkDialogue.inSecondDayDialogue = true;
         ResetDay();
     }
 
     IEnumerator ResetDayTwoTime()
     {
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(5);
         gameManager.inDayTwo = false;
         gameManager.inDayThree = true;
         Daisy2.SetActive(true);
@@ -404,13 +407,14 @@ public class PlayerControl : MonoBehaviour
         mainDayTwoObjectives.SetActive(false);
         mainDayThreeObjectives.SetActive(true);
         music.ThreeDayMusic();
+        checkDialogue.inThirdDayDialogue = true;
         ResetDay();
 
     }
 
     IEnumerator ResetDayThreeTime()
     {
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(5);
         gameManager.inDayThree = false;
         gameManager.inFInalDay = true;
         Daisy2.SetActive(false);
@@ -424,6 +428,7 @@ public class PlayerControl : MonoBehaviour
         mainDayThreeObjectives.SetActive(false);
         mainFinalDayObjectives.SetActive(true);
         music.FinalDayMusic();
+        checkDialogue.inFinalDayDialogue = true;
         ResetDay();
 
     }
@@ -435,6 +440,7 @@ public class PlayerControl : MonoBehaviour
         playerCollider.enabled = true;
         sfx.DoorSound();
         isDayFinished = false;
+        
     }
 }
   

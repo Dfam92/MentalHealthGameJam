@@ -10,7 +10,7 @@ public class LinkColorPlayerFriend : MonoBehaviour
     [SerializeField] List<Image> rootImagesToShare;
     [SerializeField] List<SpriteRenderer> bodyParts;
     // Start is called before the first frame update
-    private void OnEnable()
+    public void ColorPlayFriend()
     {
         for (int i = 0; i < bodyParts.Count; i++)
         {

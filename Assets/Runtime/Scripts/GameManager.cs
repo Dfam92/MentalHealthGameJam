@@ -41,6 +41,9 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] PlayerControl player;
     [SerializeField] MusicManager musicGM;
+    [SerializeField] PlayerDialogue checkDialogue;
+
+    
 
     public bool inTrasition = true;
     bool inPlayMode = true;
@@ -60,6 +63,9 @@ public class GameManager : MonoBehaviour
     int objectivesCount = 0;
     public int countDays = 1;
     private bool hintsOn = false;
+
+    private bool firstBackButton = true;
+    private bool firtPlayMode = true;
 
     public bool InPlayMode { get => inPlayMode; private set => inPlayMode = value; }
     public bool InColorMode { get => inColorMode; private set => inColorMode = value; }
@@ -227,6 +233,7 @@ public class GameManager : MonoBehaviour
 
     private void BackColorFlower()
     {
+        
         backGroundColorMode.SetActive(false);
         playModeCamera.SetActive(true);
         colorModeCamera.SetActive(false);
@@ -238,6 +245,12 @@ public class GameManager : MonoBehaviour
         backGroundFlowers.SetActive(false);
         InPlayMode = true;
         InColorMode = false;
+        if(firstBackButton)
+        {
+            checkDialogue.inMidSecondDayDialogue = true;
+            firstBackButton = false;
+        }
+       
     }
 
     public void ColorModeOn()
@@ -272,6 +285,12 @@ public class GameManager : MonoBehaviour
         InPlayMode = true;
         InColorMode = false;
         backGroundColorMode.SetActive(false);
+        if (firtPlayMode)
+        {
+            checkDialogue.inFirstDayDialogue = true;
+            firtPlayMode = false;
+        }
+
 
     }
     IEnumerator ChangeBackPlayMode()
@@ -279,7 +298,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(FadeTransitionColorMode(4));
         yield return new WaitForSeconds(4);
         BackColorFlower();
-
+        
     }
 
     public void BackButtonFunction()
