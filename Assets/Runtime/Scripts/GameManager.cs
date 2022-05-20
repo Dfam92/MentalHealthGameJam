@@ -40,6 +40,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject backGroundFlowers;
 
     [SerializeField] PlayerControl player;
+    [SerializeField] MusicManager musicGM;
 
     public bool inTrasition = true;
     bool inPlayMode = true;
@@ -54,51 +55,21 @@ public class GameManager : MonoBehaviour
     public bool bucketWasFilled;
     public bool bucketIsDisponible;
     public bool flowersAreDisponible;
+    public bool objectiveWasFinished;
+    public bool dayOver;
+    int objectivesCount = 0;
+    public int countDays = 1;
+    private bool hintsOn = false;
+
     public bool InPlayMode { get => inPlayMode; private set => inPlayMode = value; }
     public bool InColorMode { get => inColorMode; private set => inColorMode = value; }
 
-    public bool objectiveWasFinished;
-
-    public bool dayOver;
-
-    int objectivesCount = 0;
-    public int countDays = 1;
-
-    private bool hintsOn = false;
+   
 
     // Start is called before the first frame update
     void Start()
     {
         canvasColorMode.SetActive(false);
-    }
-
-    public void ColorFlowers()
-    {
-        
-        backGroundColorMode.SetActive(false);
-        playModeCamera.SetActive(false);
-        colorModeCamera.SetActive(true);
-        flowersToColor.SetActive(true);
-        playModeButton.SetActive(false);
-        StartCoroutine(ActiveBackButton());
-        backGroundFlowers.SetActive(true);
-        InColorMode = true;
-        InPlayMode = false;
-    }
-
-    private void BackColorFlower()
-    {
-        backGroundColorMode.SetActive(false);
-        playModeCamera.SetActive(true);
-        colorModeCamera.SetActive(false);
-        flowersToColor.SetActive(false);
-        playModeButton.SetActive(true);
-        objectiveWasFinished = true;
-        flowersAreDisponible = false;
-        backButton.interactable = false;
-        backGroundFlowers.SetActive(false);
-        InPlayMode = true;
-        InColorMode = false;
     }
 
     // Update is called once per frame
@@ -239,7 +210,36 @@ public class GameManager : MonoBehaviour
         CheckObjective(listOfObjectivesDayThree, inDayThree, dayThreeObjectives);
         CheckObjective(listOfObjectivesFinalDay, inFInalDay, finalDayObjectives);
     }
-    
+
+    public void ColorFlowers()
+    {
+
+        backGroundColorMode.SetActive(false);
+        playModeCamera.SetActive(false);
+        colorModeCamera.SetActive(true);
+        flowersToColor.SetActive(true);
+        playModeButton.SetActive(false);
+        StartCoroutine(ActiveBackButton());
+        backGroundFlowers.SetActive(true);
+        InColorMode = true;
+        InPlayMode = false;
+    }
+
+    private void BackColorFlower()
+    {
+        backGroundColorMode.SetActive(false);
+        playModeCamera.SetActive(true);
+        colorModeCamera.SetActive(false);
+        flowersToColor.SetActive(false);
+        playModeButton.SetActive(true);
+        objectiveWasFinished = true;
+        flowersAreDisponible = false;
+        backButton.interactable = false;
+        backGroundFlowers.SetActive(false);
+        InPlayMode = true;
+        InColorMode = false;
+    }
+
     public void ColorModeOn()
     {
         StartCoroutine(ChangeFadeColorMode());
@@ -253,8 +253,10 @@ public class GameManager : MonoBehaviour
     IEnumerator ChangeFadeColorMode()
     {
         StartCoroutine(FadeTransition(4));
+        musicGM.FadeOutMusic();
         player.playerImage.enabled = false;
         yield return new WaitForSeconds(4);
+        musicGM.ColorModeMusic();
         InColorMode = true;
         InPlayMode = false;
         backGroundColorMode.SetActive(true);
@@ -263,7 +265,9 @@ public class GameManager : MonoBehaviour
     IEnumerator ChangeFadePlayMode()
     {
         StartCoroutine(FadeTransitionColorMode(4));
+        musicGM.FadeOutMusic();
         yield return new WaitForSeconds(4);
+        musicGM.OneDayMusic();
         player.playerImage.enabled = true;
         InPlayMode = true;
         InColorMode = false;

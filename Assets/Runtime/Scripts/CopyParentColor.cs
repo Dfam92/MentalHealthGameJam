@@ -6,7 +6,7 @@ using DG.Tweening;
 
 public class CopyParentColor : MonoBehaviour
 {
-    private SpriteRenderer sprite;
+    [SerializeField] private SpriteRenderer sprite;
     [SerializeField] private SpriteRenderer parentImage;
     // Start is called before the first frame update
     void Start()
@@ -17,16 +17,13 @@ public class CopyParentColor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        ShareParentColor();
     }
 
     public void ShareParentColor()
     {
-        sprite = GetComponent<SpriteRenderer>();
         sprite.color = parentImage.color;
     }
-    private void OnEnable()
-    {
-        ShareParentColor();
-    }
+
+    
 }

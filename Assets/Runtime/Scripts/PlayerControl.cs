@@ -50,10 +50,14 @@ public class PlayerControl : MonoBehaviour
 
     [SerializeField] GameObject roseToCatch;
     [SerializeField] GameObject daisyToCatch;
+    
     public SpriteRenderer playerImage;
     [SerializeField] Collider2D playerCollider;
 
     [SerializeField] Animator playerAnim;
+
+    [SerializeField] MusicManager music;
+    [SerializeField] SfxAudioManager sfx;
 
     private int rotationWellCount;
     private float defaultSpeed;
@@ -63,6 +67,7 @@ public class PlayerControl : MonoBehaviour
     private Quaternion defaultPos;
     private bool handlerUp;
     private bool handlerDown;
+    private bool isDayFinished;
 
     // Start is called before the first frame update
     void Start()
@@ -85,7 +90,7 @@ public class PlayerControl : MonoBehaviour
 
     private void PlayerMovement()
     {
-        if (gameManager.InPlayMode)
+        if (gameManager.InPlayMode && !isDayFinished)
         {
             
             var horizontalInput = Input.GetAxis("Horizontal");
@@ -148,6 +153,7 @@ public class PlayerControl : MonoBehaviour
                 if (inInteraction == true && gameManager.bucketIsDisponible && !gameManager.flowersWereWatered && !gameManager.inFInalDay)
                 {
                     Debug.Log("Watering pressed");
+                    sfx.BucketSound();
                     gameManager.wateringCanWasCaught = true;
                     gameManager.objectiveWasFinished = true;
                     wateringCanSelected.SetActive(true);
@@ -168,6 +174,7 @@ public class PlayerControl : MonoBehaviour
                     gardenWateringCan.SetActive(true);
                     gameManager.flowersWereWatered = true;
                     gameManager.objectiveWasFinished = true;
+                    sfx.WateringSound();
                     StartCoroutine(DesactiveGardenWateringCan());
                     Debug.Log("Garden was Watered");
                 }
@@ -190,6 +197,7 @@ public class PlayerControl : MonoBehaviour
                         rotationWellCount++;
                         PullUpBucket();
                         Debug.Log(rotationWellCount);
+                        sfx.CrankSound();
                         if (rotationWellCount == 10)
                         {
                             bucketLiquid.SetActive(true);
@@ -198,6 +206,7 @@ public class PlayerControl : MonoBehaviour
                             gameManager.objectiveWasFinished = true;
                             Debug.Log("BucketDisponible");
                             rotationWellCount = 0;
+                            sfx.BucketSound();
 
                         }
                     }
@@ -206,6 +215,7 @@ public class PlayerControl : MonoBehaviour
                 if (inInteraction == true && gameManager.wateringCanWasCaught && !gameManager.wateringCanWasFilled && !gameManager.bucketWasFilled && gameManager.bucketIsDisponible)
                 {
                     Debug.Log("Watering Can was filled");
+                    sfx.PouringSound();
                     gameManager.wateringCanWasFilled = true;
                     gameManager.bucketWasFilled = true;
                     gameManager.objectiveWasFinished = true;
@@ -225,28 +235,25 @@ public class PlayerControl : MonoBehaviour
                 {
                     if (gameManager.inDayOne)
                     {
-                        playerImage.sortingOrder = -2;
-                        playerCollider.enabled = false;
+                        FinishDay();
                         StartCoroutine(ResetDayOneTime());
-                        StartCoroutine(gameManager.FadeTransition(dayFadeTime));
                         gameManager.inDayOne = false;
+                        
 
                     }
                     else if (gameManager.inDayTwo && gameManager.flowersWereWatered)
                     {
-                        playerImage.sortingOrder = -2;
-                        playerCollider.enabled = false;
+                        FinishDay();
                         StartCoroutine(ResetDayTwoTime());
-                        StartCoroutine(gameManager.FadeTransition(dayFadeTime));
                         gameManager.inDayTwo = false;
+                       
                     }
                     else if (gameManager.inDayThree && gameManager.flowersWereWatered)
                     {
-                        playerImage.sortingOrder = -2;
-                        playerCollider.enabled = false;
+                        FinishDay();
                         StartCoroutine(ResetDayThreeTime());
-                        StartCoroutine(gameManager.FadeTransition(dayFadeTime));
                         gameManager.inDayThree = false;
+                       
                     }
                 }
                 else if (inInteraction == true && !gameManager.flowersWereWatered)
@@ -262,6 +269,8 @@ public class PlayerControl : MonoBehaviour
 
                 if (inInteraction && gameManager.inFInalDay && !gameManager.flowersAreDisponible)
                 {
+                    roseToCatch.SetActive(false);
+                    daisyToCatch.SetActive(false);
                     playerFriend.SetActive(true);
                     fullViewButton.SetActive(true);
                     Debug.Log("Fim de Jogo");
@@ -331,6 +340,16 @@ public class PlayerControl : MonoBehaviour
         
     }
 
+    private void FinishDay()
+    {
+        isDayFinished = true;
+        playerImage.sortingOrder = -2;
+        playerCollider.enabled = false;
+        StartCoroutine(gameManager.FadeTransition(dayFadeTime));
+        music.FadeOutMusic();
+        sfx.DoorSound();
+    }
+
     private void PullUpBucket()
     {
         if(handlerUp)
@@ -365,6 +384,7 @@ public class PlayerControl : MonoBehaviour
         mainDayTwoObjectives.SetActive(true);
         Daisy1.SetActive(true);
         Rose1.SetActive(true);
+        music.TwoDayMusic();
         ResetDay();
     }
 
@@ -383,6 +403,7 @@ public class PlayerControl : MonoBehaviour
         Rose2Button.SetActive(true);
         mainDayTwoObjectives.SetActive(false);
         mainDayThreeObjectives.SetActive(true);
+        music.ThreeDayMusic();
         ResetDay();
 
     }
@@ -402,15 +423,18 @@ public class PlayerControl : MonoBehaviour
         Rose3Button.SetActive(true);
         mainDayThreeObjectives.SetActive(false);
         mainFinalDayObjectives.SetActive(true);
+        music.FinalDayMusic();
         ResetDay();
 
     }
 
     IEnumerator PlayerReAppear()
     {
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(5);
         playerImage.sortingOrder = 2;
         playerCollider.enabled = true;
+        sfx.DoorSound();
+        isDayFinished = false;
     }
 }
   

@@ -38,6 +38,5 @@ public class ButtonChangeColor : MonoBehaviour
     {
         roseFlowerButton.image.DOColor(colorPickedByPalete.color, 3);
         roseFlowerButton.image.DOFillAmount(3, 2);
-        overLapRoseButton.image.DOFade(0, 5);
     }
 }
