@@ -42,6 +42,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] PlayerControl player;
     [SerializeField] MusicManager musicGM;
     [SerializeField] PlayerDialogue checkDialogue;
+    [SerializeField] Image finalCredits;
+    [SerializeField] GameObject finalButton;
 
     
 
@@ -304,5 +306,27 @@ public class GameManager : MonoBehaviour
     public void BackButtonFunction()
     {
         StartCoroutine(ChangeBackPlayMode());
+    }
+
+    public void FinalCredits()
+    {
+        blackScreen.DOFade(1, 3);
+        finalCredits.DOFade(1, 5);
+        StartCoroutine(ActiveFinalButton());
+    }
+
+    public void FinalColorModeButton()
+    {
+        ColorModeOn();
+        blackScreen.DOFade(0, 3);
+        finalCredits.DOFade(0, 3);
+        finalButton.SetActive(false);
+    }
+
+    IEnumerator ActiveFinalButton()
+    {
+        yield return new WaitForSeconds(25);
+        finalButton.SetActive(true);
+
     }
 }
