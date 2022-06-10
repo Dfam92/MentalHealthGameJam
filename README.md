@@ -2,6 +2,10 @@
 
 <h2 align = center>🎮 MentalHealthGameJam May 1-22, 2022🎮</h2>
 
+<p align="center">
+<img src = "ColorThingsImage.jpg" width = "50%" >
+</p>
+
 <h3 align = center> A link to Play ⏯️ (https://youtu.be/MBZKBsj-RIw](https://play.unity.com/mg/other/color-things)</h2>
 <h3 align = center> A video to Watch ⏯️ (https://youtu.be/MBZKBsj-RIw](https://youtu.be/I7iYfjKbguU) </h2>
 <p align = "justify">
